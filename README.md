@@ -1,30 +1,27 @@
-# React + TypeScript + Vite
+# Крипто Демотрейдинг
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Демонстрационное веб-приложение для торговли криптовалютами с визуализацией данных в реальном времени.
 
-Currently, two official plugins are available:
+**Демо:** https://tresh-polka.github.io/diplom/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Функционал
 
-## Expanding the ESLint configuration
+- Реальные курсы BTC/USDT и ETH/USDT через WebSocket Binance
+- Свечной график с историческими данными (Binance REST API)
+- Демо-счёт: покупка/продажа, баланс, портфель, P&L
+- Адаптивный интерфейс, тёмная тема
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Технологии
 
-- Configure the top-level `parserOptions` property like this:
+- React 18, TypeScript, Vite
+- TailwindCSS
+- Lightweight Charts
+- Binance WebSocket / REST API
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## Запуск локально
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+```bash
+git clone https://github.com/tresh-polka/diplom.git
+cd diplom
+npm install
+npm run dev
