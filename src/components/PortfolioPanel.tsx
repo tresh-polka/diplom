@@ -17,7 +17,6 @@ const PortfolioPanel: React.FC<PortfolioPanelProps> = ({ assets, balance, curren
   const currentPrice = currentPrices[selectedSymbol] || 0;
   const costOrRevenue = parseFloat(amount) * currentPrice;
   const asset = assets.find(a => a.symbol === selectedSymbol);
-  const maxSellAmount = asset ? asset.amount : 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
