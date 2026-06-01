@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TickerData {
   symbol: string;
@@ -9,51 +9,32 @@ interface TickerData {
 
 export const useBinanceWebSocket = (symbols: string[]) => {
   const [data, setData] = useState<Record<string, TickerData>>({});
-  const wsRef = useRef<WebSocket | null>(null);
+
+  const fetchPrices = async () => {
+    for (const symbol of symbols) {
+      try {
+        const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const ticker = await response.json();
+        setData(prev => ({
+          ...prev,
+          [symbol]: {
+            symbol: symbol,
+            price: parseFloat(ticker.lastPrice).toFixed(2),
+            priceChange: parseFloat(ticker.priceChange).toFixed(2),
+            priceChangePercent: parseFloat(ticker.priceChangePercent).toFixed(2),
+          }
+        }));
+      } catch (err) {
+        console.error(`REST error for ${symbol}:`, err);
+      }
+    }
+  };
 
   useEffect(() => {
-    // Стрим для нескольких символов: wss://stream.binance.com:9443/stream?streams=btcusdt@ticker/ethusdt@ticker
-    const streams = symbols.map(s => `${s.toLowerCase()}@ticker`).join('/');
-    const wsUrl = `wss://stream.binance.com:9443/stream?streams=${streams}`;
-    
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-    };
-
-    ws.onmessage = (event) => {
-      const response = JSON.parse(event.data);
-      const streamName = response.stream; // например "btcusdt@ticker"
-      const ticker = response.data;
-      
-      const symbolFromStream = streamName.split('@')[0].toUpperCase();
-      
-      setData(prev => ({
-        ...prev,
-        [symbolFromStream]: {
-          symbol: symbolFromStream,
-          price: parseFloat(ticker.c).toFixed(2),
-          priceChange: parseFloat(ticker.p).toFixed(2),
-          priceChangePercent: parseFloat(ticker.P).toFixed(2),
-        }
-      }));
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
-    };
-
-    return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-    };
+    fetchPrices(); // первый запрос сразу
+    const interval = setInterval(fetchPrices, 3000); // обновление каждые 3 секунды
+    return () => clearInterval(interval);
   }, [symbols]);
 
   return data;
